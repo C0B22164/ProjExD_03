@@ -108,6 +108,27 @@ class Bomb:
         screen.blit(self._img, self._rct)
 
 
+class Beam:
+    """
+    ビームに関するクラス
+    """
+    def __init__(self, bird, screen: pg.Surface):
+        """
+        
+        """
+        self._img = pg.image.load("ex03/fig/beam.png")
+        self._rct = self._img.get_rect()
+        self._rct.centerx = bird._rct.centerx + 10
+        self._rct.centery = bird._rct.centery
+        screen.blit(self._img, (self._rct.centerx, self._rct.centery))
+        
+    def update(self, screen: pg.Surface):
+        self._vx = +1
+        self._rct.move_ip(self._vx, 0)
+        screen.blit(self._img, self._rct)
+        
+
+
 def main():
     pg.display.set_caption("たたかえ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
@@ -116,27 +137,39 @@ def main():
 
     bird = Bird(3, (900, 400))
     bomb = Bomb((255, 0, 0), 10)
+    beam = None
 
     tmr = 0
     while True:
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 return
+            if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
+                beam = Beam(bird, screen)
+                
         tmr += 1
         screen.blit(bg_img, [0, 0])
         
-        if bird._rct.colliderect(bomb._rct):
-            # ゲームオーバー時に，こうかとん画像を切り替え，1秒間表示させる
-            bird.change_img(8, screen)
-            pg.display.update()
-            time.sleep(1)
-            return
+        if bomb is not None:
+            if bird._rct.colliderect(bomb._rct):
+                # ゲームオーバー時に，こうかとん画像を切り替え，1秒間表示させる
+                bird.change_img(8, screen)
+                pg.display.update()
+                time.sleep(1)
+                return
 
         key_lst = pg.key.get_pressed()
         bird.update(key_lst, screen)
-        bomb.update(screen)
+        if bomb is not None:
+            bomb.update(screen)
+        if beam is not None:
+            beam.update(screen)
+            if bomb is not None:
+                if beam._rct.colliderect(bomb._rct):
+                    beam = None
+                    bomb = None
         pg.display.update()
-        clock.tick(1000)
+        clock.tick(500)
 
 
 if __name__ == "__main__":
