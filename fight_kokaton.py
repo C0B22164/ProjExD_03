@@ -144,7 +144,24 @@ class Beam:
         self._vx = +1
         self._rct.move_ip(self._vx, 0)
         screen.blit(self._img, self._rct)
-
+    
+    
+    class Explosion:
+        def __init__(self, bomb: pg.Surface):
+            exp_img = pg.image.load("ex03/fig/explosion.gif")
+            self._exp_imgs = [
+                exp_img,
+                pg.transform.flip(exp_img, True, False),
+                pg.transform.flip(exp_img, False, True),
+                pg.transform.flip(exp_img, True, True)
+            ]
+            self._rct_center = bomb._rct.center
+            self._life = 5
+        
+        def update(self, screen: pg.Surface):
+            if self._life >= 0:
+                for img in self._exp_imgs:
+                    screen.blit(img, self._rct)
             
 
 def main():
