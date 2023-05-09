@@ -144,14 +144,16 @@ class Beam:
         self._vx = +1
         self._rct.move_ip(self._vx, 0)
         screen.blit(self._img, self._rct)
-        
 
+            
 
 def main():
     pg.display.set_caption("たたかえ！こうかとん")
+    score = 0                                               # 撃ち落とした爆弾の数を格納する変数
     screen = pg.display.set_mode((WIDTH, HEIGHT))
     clock = pg.time.Clock()
     bg_img = pg.image.load("ex03/fig/pg_bg.jpg")
+    fonto = pg.font.Font(None, 80)                          # フォントの作成
 
     bird = Bird(3, (900, 400))
     bombs = [Bomb() for _ in range(NUM_OF_BOMBS)]
@@ -167,6 +169,8 @@ def main():
                 
         tmr += 1
         screen.blit(bg_img, [0, 0])
+        txt = fonto.render("Score : " + str(score), True, (0, 0, 0))
+        screen.blit(txt, [100, 100])                        # テキストの描画
         
         for bomb in bombs:
             if bird._rct.colliderect(bomb._rct):
@@ -178,16 +182,16 @@ def main():
 
         key_lst = pg.key.get_pressed()
         bird.update(key_lst, screen)
-        for bomb in bombs:
+        for i, bomb in enumerate(bombs):
             bomb.update(screen)
         if beam is not None:
             beam.update(screen)
-            for bomb in bombs:
+            for i, bomb in enumerate(bombs):
                 if beam._rct.colliderect(bomb._rct):
                     beam = None
-                    bombs.remove(bomb)
+                    del bombs[i]
+                    score += 1                              # 爆弾を撃ち落とす度にスコアを加算
                     bird.change_img(6, screen)
-                    pg.display.update()
                     break
         pg.display.update()
         clock.tick(500)
