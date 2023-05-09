@@ -113,9 +113,6 @@ class Beam:
     ビームに関するクラス
     """
     def __init__(self, bird, screen: pg.Surface):
-        """
-        
-        """
         self._img = pg.image.load("ex03/fig/beam.png")
         self._rct = self._img.get_rect()
         self._rct.centerx = bird._rct.centerx + 10
@@ -168,6 +165,8 @@ def main():
                 if beam._rct.colliderect(bomb._rct):
                     beam = None
                     bomb = None
+                    bird.change_img(6, screen)
+                    pg.display.update()
         pg.display.update()
         clock.tick(500)
 
