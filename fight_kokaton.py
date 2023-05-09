@@ -175,6 +175,8 @@ def main():
     bird = Bird(3, (900, 400))
     bombs = [Bomb() for _ in range(NUM_OF_BOMBS)]
     beam = None
+    end = False
+    t = 0
 
     tmr = 0
     while True:
@@ -210,6 +212,12 @@ def main():
                     score += 1                              # 爆弾を撃ち落とす度にスコアを加算
                     bird.change_img(6, screen)
                     break
+        if not bombs:                                       # 爆弾が全部なくなると
+            t += 1                                          # カウント開始
+            if t >= 500:                                    # 1秒後
+                end = True                                  # 終了フラッグを立てる
+        if end:                                             # 終了フラッグが立っているとき
+            return                                          # ゲームを終了
         pg.display.update()
         clock.tick(500)
 
